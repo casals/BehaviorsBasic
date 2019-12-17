@@ -70,7 +70,7 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
     public String assignGroupBehavior() {
         String group = "territorial";
         String behavior = "Behaviors:critter";
-        for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class, GroupTagComponent.class, BehaviorComponent.class)) {
+        for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class, GroupTagComponent.class)) {
             GroupTagComponent groupTag = entityRef.getComponent(GroupTagComponent.class);
             if (!groupTag.groups.contains(group)) {
                 continue;
@@ -78,10 +78,12 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
 
             logger.info("Assigning behavior to a wild animal based on the following prefab: " + entityRef.getParentPrefab().getName());
 
-            BehaviorComponent behaviorComponent = entityRef.getComponent(BehaviorComponent.class);
-            groupTag.backupBT = behaviorComponent.tree;
-            groupTag.backupRunningState = new Interpreter(behaviorComponent.interpreter);
-            entityRef.saveComponent(groupTag);
+            if (entityRef.hasComponent(BehaviorComponent.class)) {
+                BehaviorComponent behaviorComponent = entityRef.getComponent(BehaviorComponent.class);
+                groupTag.backupBT = behaviorComponent.tree;
+                groupTag.backupRunningState = new Interpreter(behaviorComponent.interpreter);
+                entityRef.saveComponent(groupTag);
+            }
 
             assignBehaviorToEntity(entityRef, behavior);
 
@@ -102,7 +104,7 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
             behaviorComponent.interpreter = new Interpreter(new Actor(entityRef));
             behaviorComponent.interpreter.setTree(newBehaviorTree);
 
-            entityRef.saveComponent(behaviorComponent);
+            entityRef.addOrSaveComponent(behaviorComponent);
         }
     }
 }
