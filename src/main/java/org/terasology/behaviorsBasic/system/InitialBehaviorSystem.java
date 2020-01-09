@@ -24,10 +24,12 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.logic.behavior.BehaviorComponent;
+import org.terasology.logic.behavior.GroupTagComponent;
 import org.terasology.logic.behavior.Interpreter;
 import org.terasology.logic.behavior.asset.BehaviorTree;
 import org.terasology.logic.behavior.core.Actor;
 import org.terasology.logic.console.commandSystem.annotations.Command;
+import org.terasology.logic.console.commandSystem.annotations.CommandParam;
 import org.terasology.registry.In;
 import org.terasology.wildAnimals.component.WildAnimalComponent;
 
@@ -84,5 +86,32 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
             entityRef.saveComponent(behaviorComponent);
         }
 
+    }
+
+    @Command(shortDescription = "Assigns the 'hannahsDeer' behavior to all deer.")
+    public String assignGroupBehavior(@CommandParam("groupLabel") String groupLabel) {
+        String behavior = "BehaviorsBasic:hannahsDeer";
+
+        for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class)) {
+            if(entityRef.getParentPrefab().getName().toUpperCase().contains(groupLabel.toUpperCase())) {
+                GroupTagComponent groupTag = new GroupTagComponent();
+                groupTag.groups.add(groupLabel);
+                entityRef.saveComponent(groupTag);
+            }
+        }
+
+        for (EntityRef entityRef : entityManager.getEntitiesWith(GroupTagComponent.class)) {
+            if (entityRef.getComponent(GroupTagComponent.class).groups.contains(groupLabel)) {
+
+                logger.info("Assigning behavior to a group member based on the following prefab: " + entityRef.getParentPrefab().getName());
+
+                assignBehaviorToEntity(entityRef, behavior);
+
+                logger.info("Behavior assigned:" + behavior);
+
+            }
+
+        }
+        return "All members in the " + groupLabel + "  group now have the same behavior!";
     }
 }
