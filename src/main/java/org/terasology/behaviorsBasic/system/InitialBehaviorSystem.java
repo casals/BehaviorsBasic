@@ -52,21 +52,21 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
      *
      * @return success message
      */
-    @Command(shortDescription = "Assigns the 'critter' behavior to all wild animals.")
+    @Command(shortDescription = "Assigns the 'hannahsDeer' behavior to all red deer.")
     public String assignBehavior() {
 
-        String behavior = "Behaviors:critter";
+        String behavior = "BehaviorsBasic:hannahsDeer";
         for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class)) {
+            if(entityRef.getParentPrefab().getName().equals("WildAnimals:redDeer")) {
+                logger.info("Assigning behavior to a wild animal based on the following prefab: " + entityRef.getParentPrefab().getName());
 
-            logger.info("Assigning behavior to a wild animal based on the following prefab: " + entityRef.getParentPrefab().getName());
+                assignBehaviorToEntity(entityRef, behavior);
 
-            assignBehaviorToEntity(entityRef, behavior);
+                logger.info("Behavior assigned:" + behavior);
 
-            logger.info("Behavior assigned:" + behavior);
-
-
+            }
         }
-        return "All wild animals should have the same behavior now.";
+        return "All red deer animals should have the same behavior now.";
     }
 
 
