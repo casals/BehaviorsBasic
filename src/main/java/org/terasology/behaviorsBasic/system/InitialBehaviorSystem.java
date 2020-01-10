@@ -36,14 +36,13 @@ import org.terasology.wildAnimals.component.WildAnimalComponent;
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class InitialBehaviorSystem extends BaseComponentSystem {
 
-    //Logger - use it to easily find what's happening with your implementation
     private static final Logger logger = LoggerFactory.getLogger(InitialBehaviorSystem.class);
     @In
     private EntityManager entityManager;
     @In
     private AssetManager assetManager;
 
-    /**     *
+    /***
      * Objective: assign the same behavior to entities of the same type (wild animals).
      * Please modify the following code according to the instructions provided in each
      * GCI task.
@@ -56,7 +55,6 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
      */
     @Command(shortDescription = "Assigns the 'hannahsDeer' behavior to all red deer.")
     public String assignBehavior() {
-
         String behavior = "BehaviorsBasic:hannahsDeer";
         for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class)) {
             if(entityRef.getParentPrefab().getName().equals("WildAnimals:redDeer")) {
@@ -89,29 +87,19 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
     }
 
     @Command(shortDescription = "Assigns the 'hannahsDeer' behavior to all deer.")
-    public String assignGroupBehavior(@CommandParam("groupLabel") String groupLabel) {
+    public String assignGroupBehavior() {
         String behavior = "BehaviorsBasic:hannahsDeer";
-
-        for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class)) {
-            if(entityRef.getParentPrefab().getName().toUpperCase().contains(groupLabel.toUpperCase())) {
-                GroupTagComponent groupTag = new GroupTagComponent();
-                groupTag.groups.add(groupLabel);
-                entityRef.saveComponent(groupTag);
-            }
-        }
-
         for (EntityRef entityRef : entityManager.getEntitiesWith(GroupTagComponent.class)) {
-            if (entityRef.getComponent(GroupTagComponent.class).groups.contains(groupLabel)) {
-
-                logger.info("Assigning behavior to a group member based on the following prefab: " + entityRef.getParentPrefab().getName());
+            if (entityRef.getComponent(GroupTagComponent.class).groups.contains("gci")) {
+                BehaviorComponent behaviorComponent = entityRef.getComponent(BehaviorComponent.class);
+                GroupTagComponent groupTagComponent = entityRef.getComponent(GroupTagComponent.class);
+                groupTagComponent.backupBT = behaviorComponent.tree;
+                groupTagComponent.backupRunningState = new Interpreter(behaviorComponent.interpreter);
+                entityRef.saveComponent(groupTagComponent);
 
                 assignBehaviorToEntity(entityRef, behavior);
-
-                logger.info("Behavior assigned:" + behavior);
-
             }
-
         }
-        return "All members in the " + groupLabel + "  group now have the same behavior!";
+        return "All members in the gci group now have the same behavior!";
     }
 }
