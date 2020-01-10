@@ -1,0 +1,16 @@
+{
+  "parent" : "greenDeer",
+  "skeletalmesh" : {
+    "mesh" : "deer",
+    "heightOffset" : -0.8,
+    "material" : "blueDeerSkin",
+    "animation" : "deerIdle",
+    "loop" : true
+  },
+  "Behavior" : {
+    "tree" : "Behaviors:critter"
+  },
+  "GroupTag": {
+    "groups": ["gci"]
+  }
+}
