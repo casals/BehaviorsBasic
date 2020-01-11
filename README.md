@@ -1,3 +1,3 @@
 # BehaviorsBasic
 
-Skeleton module for GCI 2019
+Spawning testDeer and running the assignGroupBehavior() function will give them both the behavior of hannahsDeer.
