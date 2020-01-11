@@ -29,7 +29,6 @@ import org.terasology.logic.behavior.Interpreter;
 import org.terasology.logic.behavior.asset.BehaviorTree;
 import org.terasology.logic.behavior.core.Actor;
 import org.terasology.logic.console.commandSystem.annotations.Command;
-import org.terasology.logic.console.commandSystem.annotations.CommandParam;
 import org.terasology.registry.In;
 import org.terasology.wildAnimals.component.WildAnimalComponent;
 
@@ -56,12 +55,11 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
     @Command(shortDescription = "Assigns the 'hannahsDeer' behavior to all red deer.")
     public String assignBehavior() {
         String behavior = "BehaviorsBasic:hannahsDeer";
+        logger.info("ENTITIES" + entityManager.getCountOfEntitiesWith(GroupTagComponent.class));
         for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class)) {
             if(entityRef.getParentPrefab().getName().equals("WildAnimals:redDeer")) {
                 logger.info("Assigning behavior to a wild animal based on the following prefab: " + entityRef.getParentPrefab().getName());
-
                 assignBehaviorToEntity(entityRef, behavior);
-
                 logger.info("Behavior assigned:" + behavior);
 
             }
@@ -71,7 +69,6 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
 
 
     private void assignBehaviorToEntity(EntityRef entityRef, String behavior) {
-
         BehaviorTree newBehaviorTree = assetManager.getAsset(behavior, BehaviorTree.class).get();
 
         if(null != newBehaviorTree) {
@@ -86,20 +83,12 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
 
     }
 
-    @Command(shortDescription = "Assigns the 'hannahsDeer' behavior to all deer.")
+    @Command(shortDescription = "Assigns the 'hannahsDeer' behavior to all members that are a part of the GCI group.")
     public String assignGroupBehavior() {
         String behavior = "BehaviorsBasic:hannahsDeer";
-        for (EntityRef entityRef : entityManager.getEntitiesWith(GroupTagComponent.class)) {
-            if (entityRef.getComponent(GroupTagComponent.class).groups.contains("gci")) {
-                BehaviorComponent behaviorComponent = entityRef.getComponent(BehaviorComponent.class);
-                GroupTagComponent groupTagComponent = entityRef.getComponent(GroupTagComponent.class);
-                groupTagComponent.backupBT = behaviorComponent.tree;
-                groupTagComponent.backupRunningState = new Interpreter(behaviorComponent.interpreter);
-                entityRef.saveComponent(groupTagComponent);
-
+        for (EntityRef entityRef : entityManager.getEntitiesWith(GroupTagComponent.class))
+            if (entityRef.getComponent(GroupTagComponent.class).groups.contains("gci"))
                 assignBehaviorToEntity(entityRef, behavior);
-            }
-        }
         return "All members in the gci group now have the same behavior!";
     }
 }

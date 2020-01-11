@@ -1,16 +1,25 @@
 {
-  "parent" : "greenDeer",
-  "skeletalmesh" : {
-    "mesh" : "deer",
-    "heightOffset" : -0.8,
-    "material" : "blueDeerSkin",
-    "animation" : "deerIdle",
-    "loop" : true
-  },
-  "Behavior" : {
-    "tree" : "Behaviors:critter"
+  "parent": "deer",
+  "skeletalmesh": {
+    "mesh": "deer",
+    "heightOffset": -0.8,
+    "material": "blueDeerSkin",
+    "animation": "deerIdle",
+    "loop": true
   },
   "GroupTag": {
     "groups": ["gci"]
+  },
+  "Behavior": {
+    "tree": "Behaviors:critter"
+  },
+  "FleeOnHit": {
+    "minDistance": 5
+  },
+  "AttackOnHit": {
+    "minDistance": 5
+  },
+  "FindNearbyPlayers": {
+    "searchRadius": 10
   }
 }
