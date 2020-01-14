@@ -1,0 +1,5 @@
+{
+  "groupLabel": "robot",
+  "needsHive": "false",
+  "behavior": "BehaviorsBasic:robo"
+}

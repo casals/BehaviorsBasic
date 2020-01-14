@@ -1,0 +1,28 @@
+{
+  "parent" : "greenDeer",
+  "skeletalmesh" : {
+    "mesh" : "deer",
+    "heightOffset" : -0.8,
+    "material" : "roboDeerSkin",
+    "animation" : "deerIdle",
+    "loop" : true
+  },
+  "Behavior" : {
+    "tree" : "Behaviors:critter"
+  },
+  "GroupTag": {
+    "groups": ["robot"]
+  },
+  "FleeOnHit": {
+    "minDistance": 5
+  },
+  "AttackOnHit": {
+    "minDistance": 5
+  },
+  "FindNearbyPlayers": {
+    "searchRadius": 10
+  },
+  "IsStillFriendly": {
+    "isFriendly": true
+  }
+}

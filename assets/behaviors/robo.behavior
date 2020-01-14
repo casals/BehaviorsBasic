@@ -1,4 +1,3 @@
-
 {
   dynamic: [
     {
@@ -47,6 +46,11 @@
               }
             },
             {
+              is_still_friendly: {
+                isFriendly: false
+              }
+            },
+            {
               log: {
                 message: "You've made an enemy... A deer is attacking you!"
               }
@@ -62,21 +66,38 @@
           "N charactersWithinRange nonEmpty"
         ],
         child: {
-          sequence: [
-            followCharacter,
+          selector: [
+            {
+              guard: {
+                componentPresent: "BehaviorsBasic:IsStillFriendly",
+                values: [
+                  "V isFriendly == true"
+                ],
+                child: {
+                  sequence: [
+                    followCharacter,
+                    {
+                      lookup: {
+                        tree: "Behaviors:follow"
+                      }
+                    },
+                    {
+                      set_speed: {
+                        speedMultiplier: 0.3
+                      }
+                    },
+                    {
+                      log: {
+                        message: "You've made a new friend! A deer is following you."
+                      }
+                    }
+                  ]
+                }
+              }
+            },
             {
               lookup: {
-                tree: "Behaviors:follow"
-              }
-            },
-            {
-              set_speed: {
-                speedMultiplier: 0.3
-              }
-            },
-            {
-              log: {
-                message: "You've made a new friend! A deer is following you."
+                tree: "Behaviors:flee"
               }
             }
           ]
