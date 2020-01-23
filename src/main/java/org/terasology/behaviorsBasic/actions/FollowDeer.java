@@ -32,14 +32,10 @@ public class FollowDeer extends BaseAction {
     @Override
     public void construct(Actor actor) {
         FollowComponent followComponent = new FollowComponent();
-        FindNearbyPlayersComponent component = actor.getComponent(FindNearbyPlayersComponent.class);
-        List<EntityRef> allEntities=component.charactersWithinRange;
         EntityRef temp = null;
-        for(int i=0;i<allEntities.size();i++)
-        {
-            if(allEntities.get(i).getParentPrefab().getName().endsWith("deer"))
-            {
-                temp = allEntities.get(i);
+        for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class)) {
+            if(entityRef.getParentPrefab().getName().equals("WildAnimals:deer")) {
+                temp = entityRef;
                 break;
             }
         }
