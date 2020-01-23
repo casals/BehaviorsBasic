@@ -69,7 +69,7 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
 
     @Command(shortDescription = "Assigns wild animals in the \"magic\" group the behavior \"cowAndCatHypnotised\".")
     public String assignGroupBehavior() {
-        String group = "magic";
+        String group = "BehaviorsBasic:magic";
         String behavior = "BehaviorsBasic:cowAndCatHypnotised";
         for(EntityRef entityRef : entityManager.getEntitiesWith(GroupTagComponent.class)){
             GroupTagComponent tag = entityRef.getComponent(GroupTagComponent.class);
