@@ -24,12 +24,15 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.logic.behavior.BehaviorComponent;
+import org.terasology.logic.behavior.GroupTagComponent;
 import org.terasology.logic.behavior.Interpreter;
 import org.terasology.logic.behavior.asset.BehaviorTree;
 import org.terasology.logic.behavior.core.Actor;
 import org.terasology.logic.console.commandSystem.annotations.Command;
 import org.terasology.registry.In;
 import org.terasology.wildAnimals.component.WildAnimalComponent;
+
+import java.util.Optional;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class InitialBehaviorSystem extends BaseComponentSystem {
@@ -52,37 +55,44 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
      *
      * @return success message
      */
-    @Command(shortDescription = "Assigns the 'critter' behavior to all wild animals.")
+    @Command(shortDescription = "Assigns the \"friendlyCritter\" behavior to deer.")
     public String assignBehavior() {
-
-        String behavior = "Behaviors:critter";
+        String behavior = "Behaviors:friendlyCritter";
         for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class)) {
-
-            logger.info("Assigning behavior to a wild animal based on the following prefab: " + entityRef.getParentPrefab().getName());
-
-            assignBehaviorToEntity(entityRef, behavior);
-
-            logger.info("Behavior assigned:" + behavior);
-
-
+            if(entityRef.getParentPrefab().getName().equals("WildAnimals:deer")) {
+                assignBehaviorToEntity(entityRef, behavior);
+                logger.info("Behavior assigned: " + behavior);
+            }
         }
-        return "All wild animals should have the same behavior now.";
+        return "Deer should have the same behavior now.";
     }
 
+    @Command(shortDescription = "Assigns wild animals in the \"magic\" group the behavior \"cowAndCatHypnotised\".")
+    public String assignGroupBehavior() {
+        String group = "BehaviorsBasic:magic";
+        String behavior = "BehaviorsBasic:cowAndCatHypnotised";
+        for(EntityRef entityRef : entityManager.getEntitiesWith(GroupTagComponent.class)){
+            GroupTagComponent tag = entityRef.getComponent(GroupTagComponent.class);
+            if(!tag.groups.contains(group))
+                continue;
+            BehaviorComponent component = entityRef.getComponent(BehaviorComponent.class);
+            tag.backupBT = component.tree;
+            tag.backupRunningState = component.interpreter;
+            assignBehaviorToEntity(entityRef, behavior);
+            logger.info("Behavior assigned: " + behavior);
+        }
+        return "All the animals in the group should have the same behavior now.";
+    }
 
     private void assignBehaviorToEntity(EntityRef entityRef, String behavior) {
-
-        BehaviorTree newBehaviorTree = assetManager.getAsset(behavior, BehaviorTree.class).get();
-
-        if(null != newBehaviorTree) {
+        Optional<BehaviorTree> behaviorTree = assetManager.getAsset(behavior, BehaviorTree.class);
+        if (behaviorTree.isPresent()) {
             BehaviorComponent behaviorComponent = new BehaviorComponent();
-
+            BehaviorTree newBehaviorTree = behaviorTree.get();
             behaviorComponent.tree = newBehaviorTree;
             behaviorComponent.interpreter = new Interpreter(new Actor(entityRef));
             behaviorComponent.interpreter.setTree(newBehaviorTree);
-
-            entityRef.saveComponent(behaviorComponent);
+            entityRef.addOrSaveComponent(behaviorComponent);
         }
-
     }
 }
