@@ -1,0 +1,48 @@
+{
+  dynamic: [
+    {
+      guard: {
+        componentPresent: "Health",
+        values: ["V currentHealth < 10" ],
+        child :{
+        sequence: [
+            {
+              lookup: {
+                tree: "Behaviors:flee"
+                }
+            }
+        ]
+      }
+    }
+    },
+    {
+      guard: {
+        componentPresent: "Behaviors:FindNearbyPlayers",
+        values: ["N charactersWithinRange nonEmpty"],
+        child: {
+          sequence: [
+            { sleep: {time: 0.6f }},
+            followDeer,
+            { lookup: {tree: "Behaviors:follow" }}
+          ]
+        }
+      }
+    },
+    {
+      guard: {
+        componentPresent: "Behaviors:AttackOnHit",
+        values: ["N instigator exists"],
+        child: {
+          lookup: {
+            tree: "Behaviors:hostile"
+          }
+        }
+      }
+    },
+    {
+      lookup: {
+        tree: "Behaviors:stray"
+      }
+    }
+  ]
+}
