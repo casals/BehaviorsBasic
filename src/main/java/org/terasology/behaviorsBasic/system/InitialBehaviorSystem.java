@@ -92,7 +92,6 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
         return "All the animals in the group should have the same behavior now.";
     }
 
-
     private void assignBehaviorToEntity(EntityRef entityRef, String behavior) {
         Optional<BehaviorTree> potentialBehaviorTree = assetManager.getAsset(behavior, BehaviorTree.class);
 

@@ -6,11 +6,11 @@
     "animation": "cowIdle",
     "loop": true
   },
+  "GroupTag" : {
+    "groups" : [ "magic" ]
+  },
   "Behavior": {
     "tree": "Behaviors:stray"
-  },
-  "GroupTag": {
-    "groups": ["magic"]
   },
   "FleeOnHit": {
     "minDistance": 5,
@@ -43,8 +43,8 @@
   "Character": {},
   "AliveCharacter": {},
   "WildAnimal": {
-    "name": "Cow",
-    "icon": "WildAnimals:cowIcon"
+    "name": "Cow2",
+    "icon": "WildAnimals:cow2Icon"
   },
   "NPCMovement": {},
   "CreatureNameGenerator": {

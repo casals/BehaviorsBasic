@@ -6,15 +6,18 @@
     "animation": "catIdle",
     "loop": true
   },
+  "GroupTag" : {
+    "groups" : [ "magic" ]
+  },
   "Behavior": {
     "tree": "Behaviors:stray"
-  },
-  "GroupTag": {
-    "groups": ["magic"]
   },
   "FleeOnHit": {
     "minDistance": 5,
     "speedMultiplier": 1.2
+  },
+  "StrayIfIdle": {
+    "defaultSpeedMultiplier": 0.3
   },
   "BlockDropGrammar": {
     "blockDrops": [],
@@ -40,7 +43,8 @@
   "Character": {},
   "AliveCharacter": {},
   "WildAnimal": {
-    "name": "Cat"
+    "name": "Cat",
+    "icon": "WildAnimals:catIcon"
   },
   "NPCMovement": {},
   "CreatureNameGenerator": {
@@ -71,7 +75,7 @@
   "MinionMove": {},
   "Health": {
     "destroyEntityOnNoHealth": true,
-    "currentHealth": 50
+    "currentHealth": 7
   },
   "BoxShape": {
     "extents": [
