@@ -1,0 +1,113 @@
+{
+  dynamic: [
+    {
+      guard: {
+        componentPresent: "Health:Health",
+        values: [
+          "V currentHealth < 30"
+        ],
+        child: {
+          sequence: [
+            {
+              lookup: {
+                tree: "Behaviors:flee"
+              }
+            },
+            {
+              set_speed: {
+                speedMultiplier: 0.1
+              }
+            },
+            {
+              log: {
+                message: "You've injured the deer... and scared it away!"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      guard: {
+        componentPresent: "Behaviors:AttackOnHit",
+        values: [
+          "N instigator exists"
+        ],
+        child: {
+          sequence: [
+            {
+              lookup: {
+                tree: "Behaviors:hostile"
+              }
+            },
+            {
+              set_speed: {
+                speedMultiplier: 3
+              }
+            },
+            {
+              is_still_friendly: {
+                isFriendly: false
+              }
+            },
+            {
+              log: {
+                message: "You've made an enemy... A deer is attacking you!"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      guard: {
+        componentPresent: "Behaviors:FindNearbyPlayers",
+        values: [
+          "N charactersWithinRange nonEmpty"
+        ],
+        child: {
+          selector: [
+            {
+              guard: {
+                componentPresent: "BehaviorsBasic:IsStillFriendly",
+                values: [
+                  "V isFriendly == true"
+                ],
+                child: {
+                  sequence: [
+                    followCharacter,
+                    {
+                      lookup: {
+                        tree: "Behaviors:follow"
+                      }
+                    },
+                    {
+                      set_speed: {
+                        speedMultiplier: 0.3
+                      }
+                    },
+                    {
+                      log: {
+                        message: "You've made a new friend! A deer is following you."
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              lookup: {
+                tree: "Behaviors:flee"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      lookup: {
+        tree: "Behaviors:Stray"
+      }
+    }
+  ]
+}

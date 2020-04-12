@@ -37,7 +37,6 @@ import java.util.Optional;
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class InitialBehaviorSystem extends BaseComponentSystem {
 
-    //Logger - use it to easily find what's happening with your implementation
     private static final Logger logger = LoggerFactory.getLogger(InitialBehaviorSystem.class);
     @In
     private EntityManager entityManager;
@@ -55,9 +54,10 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
      *
      * @return success message
      */
-    @Command(shortDescription = "Assigns the \"territorialCritter\" behavior to all wild animals.")
+    @Command(shortDescription = "Assigns the same behavior to all wild animals.")
     public String assignBehavior() {
         String behavior = "BehaviorsBasic:territorialCritter";
+        //String behavior = "BehaviorsBasic:hannahsDeer";
         for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class, BehaviorComponent.class)) {
             logger.info("Assigning behavior to a wild animal based on the following prefab: " + entityRef.getParentPrefab().getName());
             assignBehaviorToEntity(entityRef, behavior);
@@ -105,6 +105,16 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
             behaviorComponent.interpreter.setTree(newBehaviorTree);
 
             entityRef.addOrSaveComponent(behaviorComponent);
+
         }
+    }
+
+    @Command(shortDescription = "Assigns the robot behavior to all members that are a part of the robo group.")
+    public String assignGroupBehavior() {
+        String behavior = "BehaviorsBasic:robo";
+        for (EntityRef entityRef : entityManager.getEntitiesWith(GroupTagComponent.class))
+            if (entityRef.getComponent(GroupTagComponent.class).groups.contains("robot"))
+                assignBehaviorToEntity(entityRef, behavior);
+        return "All members in the robo group now have the same behavior!";
     }
 }
