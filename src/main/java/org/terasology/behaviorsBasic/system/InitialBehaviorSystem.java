@@ -24,12 +24,15 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterMode;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.logic.behavior.BehaviorComponent;
+import org.terasology.logic.behavior.GroupTagComponent;
 import org.terasology.logic.behavior.Interpreter;
 import org.terasology.logic.behavior.asset.BehaviorTree;
 import org.terasology.logic.behavior.core.Actor;
 import org.terasology.logic.console.commandSystem.annotations.Command;
 import org.terasology.registry.In;
 import org.terasology.wildAnimals.component.WildAnimalComponent;
+
+import java.util.Optional;
 
 @RegisterSystem(RegisterMode.AUTHORITY)
 public class InitialBehaviorSystem extends BaseComponentSystem {
@@ -52,37 +55,56 @@ public class InitialBehaviorSystem extends BaseComponentSystem {
      *
      * @return success message
      */
-    @Command(shortDescription = "Assigns the 'critter' behavior to all wild animals.")
+    @Command(shortDescription = "Assigns the \"territorialCritter\" behavior to all wild animals.")
     public String assignBehavior() {
-
-        String behavior = "Behaviors:critter";
-        for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class)) {
-
+        String behavior = "BehaviorsBasic:territorialCritter";
+        for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class, BehaviorComponent.class)) {
             logger.info("Assigning behavior to a wild animal based on the following prefab: " + entityRef.getParentPrefab().getName());
-
             assignBehaviorToEntity(entityRef, behavior);
-
-            logger.info("Behavior assigned:" + behavior);
-
-
+            logger.info("Behavior assigned: " + behavior);
         }
         return "All wild animals should have the same behavior now.";
     }
 
+    @Command(shortDescription = "Assigns wild animals in the \"territorial\" group the behavior \"territorialCritter\".")
+    public String assignGroupBehavior() {
+        String group = "territorial";
+        String behavior = "Behaviors:critter";
+        for (EntityRef entityRef : entityManager.getEntitiesWith(WildAnimalComponent.class, GroupTagComponent.class)) {
+            GroupTagComponent groupTag = entityRef.getComponent(GroupTagComponent.class);
+            if (!groupTag.groups.contains(group)) {
+                continue;
+            }
+
+            logger.info("Assigning behavior to a wild animal based on the following prefab: " + entityRef.getParentPrefab().getName());
+
+            if (entityRef.hasComponent(BehaviorComponent.class)) {
+                BehaviorComponent behaviorComponent = entityRef.getComponent(BehaviorComponent.class);
+                groupTag.backupBT = behaviorComponent.tree;
+                groupTag.backupRunningState = new Interpreter(behaviorComponent.interpreter);
+                entityRef.saveComponent(groupTag);
+            }
+
+            assignBehaviorToEntity(entityRef, behavior);
+
+            logger.info("Behavior assigned: " + behavior);
+        }
+        return "All the animals in the group should have the same behavior now.";
+    }
+
 
     private void assignBehaviorToEntity(EntityRef entityRef, String behavior) {
+        Optional<BehaviorTree> potentialBehaviorTree = assetManager.getAsset(behavior, BehaviorTree.class);
 
-        BehaviorTree newBehaviorTree = assetManager.getAsset(behavior, BehaviorTree.class).get();
-
-        if(null != newBehaviorTree) {
+        if (potentialBehaviorTree.isPresent()) {
             BehaviorComponent behaviorComponent = new BehaviorComponent();
 
+            BehaviorTree newBehaviorTree = potentialBehaviorTree.get();
             behaviorComponent.tree = newBehaviorTree;
             behaviorComponent.interpreter = new Interpreter(new Actor(entityRef));
             behaviorComponent.interpreter.setTree(newBehaviorTree);
 
-            entityRef.saveComponent(behaviorComponent);
+            entityRef.addOrSaveComponent(behaviorComponent);
         }
-
     }
 }
