@@ -1,0 +1,5 @@
+{
+  "groupLabel": "territorial",
+  "needsHive": "false",
+  "behavior": "Behaviors:territorialCritter"
+}
